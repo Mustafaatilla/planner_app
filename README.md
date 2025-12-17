@@ -1,16 +1,9 @@
-# planner_app
+🌿 Planner App: Habit & Task Tracker
 
-A new Flutter project.
+Bu uygulama, günlük alışkanlıkları ve görevleri takip etmek için tasarlanmış, görsel temalı bir **Flutter** projesidir.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## ✨ Özellikler
+* **Görev Yönetimi:** Günlük yapılacaklar listesi oluşturma.
+* **Alışkanlık Takibi:** Düzenli aktivitelerin takibi (Habit Provider ile).
+* **Görsel Temalar:** Skull, butterfly ve vintage grunge gibi özel asset'lerle zenginleştirilmiş kullanıcı arayüzü.
+* **Takvim Entegrasyonu:** Haftalık ve aylık planlama görünümü.

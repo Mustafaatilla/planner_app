@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/habit_model.dart';
 import '../../logic/habit_provider.dart';
+import 'package:planner_app/l10n/app_localizations.dart';
 
 enum HabitDuration { oneWeek, oneMonth, permanent, custom }
 
@@ -75,6 +76,7 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 24.0),
@@ -102,16 +104,16 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text(
-                    'New Habit',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                   Text(
+                    l10n.newHabit,
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 24),
                   TextFormField(
                     controller: _titleController,
                     decoration: InputDecoration(
-                      labelText: 'Habit Title',
+                      labelText: l10n.habitTitle,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -120,34 +122,34 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter a title';
+                        return l10n.habitTitleHint;
                       }
                       return null;
                     },
                     autofocus: true,
                   ),
                   const SizedBox(height: 24),
-                  const Text('Duration', style: TextStyle(fontWeight: FontWeight.bold)),
+                   Text(l10n.duration, style: const TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: SegmentedButton<HabitDuration>(
-                      segments: const [
+                      segments: [
                         ButtonSegment(
                           value: HabitDuration.oneWeek,
-                          label: Text('1 Week'),
+                          label: Text(l10n.oneWeek),
                         ),
                         ButtonSegment(
                           value: HabitDuration.oneMonth,
-                          label: Text('1 Month'),
+                          label: Text(l10n.oneMonth),
                         ),
                         ButtonSegment(
                           value: HabitDuration.custom,
-                          label: Text('Custom'),
+                          label: Text(l10n.custom),
                         ),
                         ButtonSegment(
                           value: HabitDuration.permanent,
-                          label: Text('Permanent'),
+                          label: Text(l10n.permanent),
                         ),
                       ],
                       selected: {_selectedDuration},
@@ -164,22 +166,22 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                       controller: _customDaysController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        labelText: 'Duration (Days)',
+                        labelText: l10n.durationDays,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                         filled: true,
                         fillColor: theme.colorScheme.surfaceVariant.withOpacity(0.3),
-                        suffixText: 'days',
+                        suffixText: l10n.daysSuffix,
                       ),
                       validator: (value) {
                         if (_selectedDuration == HabitDuration.custom) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter duration';
+                            return l10n.enterDuration;
                           }
                           final days = int.tryParse(value);
                           if (days == null || days <= 0) {
-                            return 'Please enter a valid number';
+                            return l10n.validNumber;
                           }
                         }
                         return null;
@@ -187,7 +189,7 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                     ),
                   ],
                   const SizedBox(height: 24),
-                  const Text('Color', style: TextStyle(fontWeight: FontWeight.bold)),
+                   Text(l10n.color, style: const TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),
                   Wrap(
                     spacing: 12,
@@ -236,9 +238,9 @@ class _AddHabitSheetState extends State<AddHabitSheet> {
                       ),
                       elevation: 2,
                     ),
-                    child: const Text(
-                      'Add Habit',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    child: Text(
+                      l10n.addHabitTooltip, // Reusing existing key or new one "Add Habit"
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],

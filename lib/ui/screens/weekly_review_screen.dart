@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../logic/task_provider.dart';
 import '../../logic/habit_provider.dart';
+import 'package:planner_app/l10n/app_localizations.dart';
 import '../../logic/stats_helper.dart';
 
 class WeeklyReviewScreen extends StatelessWidget {
@@ -17,7 +18,8 @@ class WeeklyReviewScreen extends StatelessWidget {
 
     final now = DateTime.now();
     // Find the start of the week (Monday)
-    final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+    // Find the start of the week (Monday) at midnight
+    final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: now.weekday - 1));
     final endOfWeek = startOfWeek.add(const Duration(days: 6, hours: 23, minutes: 59));
 
     final completionRate = StatsHelper.calculateWeeklyTaskCompletionRate(
@@ -30,7 +32,7 @@ class WeeklyReviewScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Weekly Review'),
+        title: Text(AppLocalizations.of(context)!.weeklyReview),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -67,14 +69,14 @@ class WeeklyReviewScreen extends StatelessWidget {
                 const SizedBox(height: 40),
 
                 // Daily Breakdown Chart
-                Text('Daily Performance', style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+                Text(AppLocalizations.of(context)!.dailyPerformance, style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 24),
                 _buildDailyBreakdownChart(context, dailyStats, startOfWeek),
                 const SizedBox(height: 40),
 
                 // Habit Consistency
                 if (habitStats.isNotEmpty) ...[
-                  Text('Habit Consistency', style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(AppLocalizations.of(context)!.habitConsistency, style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 16),
                   ...habitStats.entries.map((entry) {
                     final completed = entry.value['completed']!;
@@ -97,7 +99,7 @@ class WeeklyReviewScreen extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '$completed/$active days',
+                                AppLocalizations.of(context)!.daysCount(completed, active),
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: theme.colorScheme.primary,
                                   fontWeight: FontWeight.bold,
@@ -179,7 +181,7 @@ class WeeklyReviewScreen extends StatelessWidget {
                         },
                       ),
                       Text(
-                        'Completion',
+                        AppLocalizations.of(context)!.completion,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -197,13 +199,15 @@ class WeeklyReviewScreen extends StatelessWidget {
 
   Widget _buildDailyBreakdownChart(BuildContext context, Map<int, double> dailyStats, DateTime startOfWeek) {
     final theme = Theme.of(context);
+    final localeCode = Localizations.localeOf(context).languageCode;
+
     return SizedBox(
       height: 180,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: List.generate(7, (index) {
-          final dayName = DateFormat('E').format(startOfWeek.add(Duration(days: index)));
+          final dayName = DateFormat('E', localeCode).format(startOfWeek.add(Duration(days: index)));
           final value = dailyStats[index] ?? 0.0;
           return Column(
             mainAxisAlignment: MainAxisAlignment.end,

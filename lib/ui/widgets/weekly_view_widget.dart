@@ -8,9 +8,11 @@ import '../../logic/task_provider.dart';
 import '../../logic/habit_provider.dart';
 import '../widgets/add_task_sheet.dart';
 import 'habit_list_item.dart';
+import 'package:planner_app/l10n/app_localizations.dart';
 
 import '../widgets/general_todo_list.dart';
 import '../../logic/theme_provider.dart';
+import '../../logic/locale_provider.dart';
 import '../../core/theme.dart';
 
 class WeeklyViewWidget extends StatefulWidget {
@@ -204,92 +206,16 @@ class _WeeklyViewWidgetState extends State<WeeklyViewWidget> {
           : null,
       child: Column(
         children: [
-          // Top Calendar Bar (Light Mode Only)
-          if (isLight)
-            _buildFloralTopBar(context),
+          // Top Calendar Bar (Light Mode Only) - REMOVED (Moved to AppBar)
+          // if (isLight)
+          //   _buildFloralTopBar(context),
 
           Expanded(
             child: Row(
               children: [
-                // Previous Week Button (Hidden in Light Mode if Top Bar is used, or kept?)
-                // User said "The calendar bar must look exactly like the original app layout"
-                // If original had side arrows, maybe I should keep them?
-                // But user also said "Include... Back/forward navigation arrows" in the top bar.
-                // I'll hide side arrows in Light Mode to avoid duplication.
-                if (!isLight)
-                Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
-                  child: Center(
-                    child: InkWell(
-                      onTap: () {
-                        calendarProvider.setFocusedDay(
-                          widget.focusedDay.subtract(const Duration(days: 7)),
-                        );
-                      },
-                      borderRadius: BorderRadius.circular(30),
-                      child: Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                                color: theme.colorScheme.primaryContainer,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: theme.shadowColor.withOpacity(0.1),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                        child: Icon(
-                          Icons.chevron_left_rounded,
-                          color: theme.colorScheme.onPrimaryContainer,
-                          size: 32,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
                 // Main Grid
                 Expanded(
                   child: gridContent,
-                ),
-
-                // Next Week Button (Hidden in Light Mode)
-                if (!isLight)
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: Center(
-                    child: InkWell(
-                      onTap: () {
-                        calendarProvider.setFocusedDay(
-                          widget.focusedDay.add(const Duration(days: 7)),
-                        );
-                      },
-                      borderRadius: BorderRadius.circular(30),
-                      child: Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                                color: theme.colorScheme.primaryContainer,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: theme.shadowColor.withOpacity(0.1),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                        child: Icon(
-                          Icons.chevron_right_rounded,
-                          color: theme.colorScheme.onPrimaryContainer,
-                          size: 32,
-                        ),
-                      ),
-                    ),
-                  ),
                 ),
               ],
             ),
@@ -303,80 +229,7 @@ class _WeeklyViewWidgetState extends State<WeeklyViewWidget> {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
-  Widget _buildFloralTopBar(BuildContext context) {
-    final theme = Theme.of(context);
-    final calendarProvider = Provider.of<CalendarProvider>(context);
-    
-    // Format Month Year (e.g. November 2025)
-    final title = DateFormat('MMMM yyyy').format(widget.focusedDay);
 
-    return Container(
-      height: 70,
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/textures/watercolor_bg.png'),
-          fit: BoxFit.cover,
-        ),
-        boxShadow: [
-           BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-           // Left Arrow
-           InkWell(
-             onTap: () => calendarProvider.setFocusedDay(widget.focusedDay.subtract(const Duration(days: 7))),
-             child: Container(
-               width: 40, height: 40,
-               decoration: const BoxDecoration(
-                 image: DecorationImage(image: AssetImage('assets/textures/nav_arrow_bg.png'), fit: BoxFit.cover),
-                 shape: BoxShape.circle,
-               ),
-               child: const Icon(Icons.chevron_left, color: Color(0xFF5A463F)),
-             ),
-           ),
-           
-           const SizedBox(width: 24),
-
-           // Month Year Title (Clickable)
-           InkWell(
-             onTap: () => _showCalendarDialog(context, calendarProvider),
-             borderRadius: BorderRadius.circular(12),
-             child: Padding(
-               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-               child: Text(
-                 title, 
-                 style: theme.textTheme.titleMedium?.copyWith(
-                   fontFamily: 'Poppins', 
-                   color: const Color(0xFF5A463F), 
-                   fontWeight: FontWeight.bold,
-                   fontSize: 22,
-                 )
-               ),
-             ),
-           ),
-
-           const SizedBox(width: 24),
-           
-           // Right Arrow
-           InkWell(
-             onTap: () => calendarProvider.setFocusedDay(widget.focusedDay.add(const Duration(days: 7))),
-             child: Container(
-               width: 40, height: 40,
-               decoration: const BoxDecoration(
-                 image: DecorationImage(image: AssetImage('assets/textures/nav_arrow_bg.png'), fit: BoxFit.cover),
-                 shape: BoxShape.circle,
-               ),
-               child: const Icon(Icons.chevron_right, color: Color(0xFF5A463F)),
-             ),
-           ),
-        ],
-      ),
-    );
-  }
 
   void _showCalendarDialog(BuildContext context, CalendarProvider provider) {
     final theme = Theme.of(context);
@@ -406,6 +259,7 @@ class _WeeklyViewWidgetState extends State<WeeklyViewWidget> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TableCalendar(
+                  locale: Provider.of<LocaleProvider>(context, listen: false).locale?.languageCode ?? 'en',
                   firstDay: DateTime.utc(2020, 1, 1),
                   lastDay: DateTime.utc(2030, 12, 31),
                   focusedDay: provider.focusedDay,
@@ -690,7 +544,7 @@ class _MiniGeneralTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'GENERAL',
+                      AppLocalizations.of(context)!.generalTodo.toUpperCase(),
                       style: theme.textTheme.labelSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         fontSize: 10,
@@ -848,17 +702,17 @@ class _DayBlock extends StatelessWidget {
 
     switch (weekday) {
       case DateTime.monday:
-        decorations.add(Positioned(
+        decorations.add(PositionedDirectional(
           bottom: cornerOffset, 
-          left: cornerOffset, 
+          start: cornerOffset, 
           child: Opacity(
             opacity: 0.8,
             child: Image.asset('assets/textures/skull.png', width: 28, height: 28)
           )
         )); // Skull Asset
-        decorations.add(Positioned(
+        decorations.add(PositionedDirectional(
           bottom: cornerOffset, 
-          right: cornerOffset, 
+          end: cornerOffset, 
           child: Opacity(
             opacity: 0.6,
             child: Image.asset('assets/textures/corner_web.png', width: 40, height: 40)
@@ -866,17 +720,17 @@ class _DayBlock extends StatelessWidget {
         )); // Web Asset
         break;
       case DateTime.tuesday:
-        decorations.add(Positioned(
+        decorations.add(PositionedDirectional(
           bottom: cornerOffset, 
-          left: cornerOffset, 
+          start: cornerOffset, 
           child: Opacity(
             opacity: 0.8,
             child: Image.asset('assets/textures/skull.png', width: 28, height: 28)
           )
         )); // Skull Asset
-        decorations.add(Positioned(
+        decorations.add(PositionedDirectional(
           bottom: 40, 
-          right: cornerOffset, 
+          end: cornerOffset, 
           child: Opacity(
             opacity: 0.4,
             child: Image.asset('assets/textures/corner_web.png', width: 50, height: 50)
@@ -884,17 +738,17 @@ class _DayBlock extends StatelessWidget {
         )); // Web Asset
         break;
       case DateTime.wednesday:
-        decorations.add(Positioned(
+        decorations.add(PositionedDirectional(
           bottom: cornerOffset, 
-          left: cornerOffset, 
+          start: cornerOffset, 
           child: Opacity(
             opacity: 0.8,
             child: Image.asset('assets/textures/key.png', width: 24, height: 24)
           )
         )); // Key Asset
-        decorations.add(Positioned(
+        decorations.add(PositionedDirectional(
           bottom: cornerOffset, 
-          right: cornerOffset, 
+          end: cornerOffset, 
           child: Opacity(
             opacity: 0.6,
             child: Image.asset('assets/textures/corner_web.png', width: 40, height: 40)
@@ -902,17 +756,17 @@ class _DayBlock extends StatelessWidget {
         )); // Web Asset
         break;
       case DateTime.thursday:
-        decorations.add(Positioned(
+        decorations.add(PositionedDirectional(
           bottom: cornerOffset, 
-          right: cornerOffset, 
+          end: cornerOffset, 
           child: Opacity(
             opacity: 0.8,
             child: Image.asset('assets/textures/key.png', width: 24, height: 24)
           )
         )); // Key Asset
-        decorations.add(Positioned(
+        decorations.add(PositionedDirectional(
           bottom: cornerOffset, 
-          left: cornerOffset, 
+          start: cornerOffset, 
           child: Opacity(
             opacity: 0.6,
             child: Image.asset('assets/textures/thorn_branch.png', width: 100, height: 30, fit: BoxFit.contain)
@@ -920,17 +774,17 @@ class _DayBlock extends StatelessWidget {
         )); // Thorn Branch Asset
         break;
       case DateTime.friday:
-        decorations.add(Positioned(
+        decorations.add(PositionedDirectional(
           top: cornerOffset, 
-          right: cornerOffset, 
+          end: cornerOffset, 
           child: Opacity(
             opacity: 0.8,
             child: Image.asset('assets/textures/moon.png', width: 24, height: 24)
           )
         )); // Moon Asset
-        decorations.add(Positioned(
+        decorations.add(PositionedDirectional(
           bottom: cornerOffset, 
-          left: cornerOffset, 
+          start: cornerOffset, 
           child: Opacity(
             opacity: 0.6,
             child: Image.asset('assets/textures/corner_web.png', width: 40, height: 40)
@@ -938,17 +792,17 @@ class _DayBlock extends StatelessWidget {
         )); // Web Asset
         break;
       case DateTime.saturday:
-        decorations.add(Positioned(
+        decorations.add(PositionedDirectional(
           top: cornerOffset, 
-          right: cornerOffset, 
+          end: cornerOffset, 
           child: Opacity(
             opacity: 0.8,
             child: Image.asset('assets/textures/moon.png', width: 24, height: 24)
           )
         )); // Moon Asset
-        decorations.add(Positioned(
+        decorations.add(PositionedDirectional(
           bottom: cornerOffset, 
-          left: cornerOffset, 
+          start: cornerOffset, 
           child: Opacity(
             opacity: 0.8,
             child: Image.asset('assets/textures/skeleton_hand.png', width: 36, height: 50, fit: BoxFit.contain)
@@ -956,9 +810,9 @@ class _DayBlock extends StatelessWidget {
         )); // Skeleton Hand Asset
         break;
       case DateTime.sunday:
-        decorations.add(Positioned(
+        decorations.add(PositionedDirectional(
           top: cornerOffset, 
-          right: cornerOffset, 
+          end: cornerOffset, 
           child: Opacity(
             opacity: 0.8,
             child: Image.asset('assets/textures/moon.png', width: 24, height: 24)
@@ -1009,6 +863,8 @@ class _DayBlock extends StatelessWidget {
     final headerColor = isGothic ? _getGothicHeaderColor(day.weekday) : theme.colorScheme.tertiary;
     final cardBackgroundColor = isGothic ? _getGothicBodyColor(day.weekday) : theme.colorScheme.surface;
     final borderColor = isGothic ? headerColor.withOpacity(0.5) : theme.colorScheme.secondary;
+
+    final localeCode = Provider.of<LocaleProvider>(context).locale?.languageCode ?? 'en';
 
     return GestureDetector(
       onTap: onTap,
@@ -1068,7 +924,7 @@ class _DayBlock extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              DateFormat('d').format(day),
+                              DateFormat('d', localeCode).format(day),
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: isLight ? const Color(0xFF2D4633) : Colors.white,
@@ -1077,7 +933,7 @@ class _DayBlock extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              DateFormat('EEEE').format(day),
+                              DateFormat('EEEE', localeCode).format(day),
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: isLight ? const Color(0xFF2D4633).withOpacity(0.9) : Colors.white.withOpacity(0.9),
                                 fontFamily: 'Poppins',
@@ -1089,8 +945,8 @@ class _DayBlock extends StatelessWidget {
                         
                         // Sticker
                         if (isLight)
-                          Positioned(
-                            right: -8,
+                          PositionedDirectional(
+                            end: -8,
                             top: -8,
                             child: Image.asset(
                               'assets/textures/${_getStickerAsset(day.weekday)}',
@@ -1101,9 +957,9 @@ class _DayBlock extends StatelessWidget {
 
                         // Buttons
                         Align(
-                          alignment: Alignment.centerRight,
+                          alignment: AlignmentDirectional.centerEnd,
                           child: Padding(
-                            padding: EdgeInsets.only(right: isLight ? 40.0 : 0),
+                            padding: EdgeInsetsDirectional.only(end: isLight ? 40.0 : 0),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -1162,7 +1018,7 @@ class _DayBlock extends StatelessWidget {
                                       padding: const EdgeInsets.only(top: 20),
                                       child: Center(
                                         child: Text(
-                                          'Empty',
+                                          AppLocalizations.of(context)!.empty,
                                           style: theme.textTheme.bodySmall?.copyWith(
                                             color: theme.disabledColor,
                                             fontSize: 12,
@@ -1187,7 +1043,7 @@ class _DayBlock extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Align(
-                    alignment: Alignment.bottomRight,
+                    alignment: AlignmentDirectional.bottomEnd,
                     child: isLight
                       ? InkWell(
                           onTap: () => _showAddTaskSheet(context, day),
@@ -1207,7 +1063,7 @@ class _DayBlock extends StatelessWidget {
                                 const Icon(Icons.add, color: Colors.white, size: 20),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'Add a task...',
+                                  AppLocalizations.of(context)!.addTask,
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
@@ -1307,7 +1163,46 @@ class _TaskItem extends StatelessWidget {
                 height: 28,
                 child: isLight
                   ? InkWell(
-                      onTap: () => taskProvider.toggleTaskCompletion(task.id),
+                      onTap: () async {
+                        final now = DateTime.now();
+                        final today = DateTime(now.year, now.month, now.day);
+                        // Check if task date is strictly before today (ignoring time if task date has time)
+                        // Assuming task.date is set. If null (general task), no verification needed?
+                        // User said "past habits and tasks". General tasks are usually timeless.
+                        // But if task.date is present:
+                        if (task.date != null) {
+                          final taskDate = DateTime(task.date!.year, task.date!.month, task.date!.day);
+                          final isPast = taskDate.isBefore(today);
+                          
+                          if (isPast && !task.isCompleted) {
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text(AppLocalizations.of(context)!.confirmCompletion),
+                                content: Text(AppLocalizations.of(context)!.confirmCompletionMessage),
+                                actionsAlignment: MainAxisAlignment.spaceBetween,
+                                actionsPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, false),
+                                    child: Text(AppLocalizations.of(context)!.no, style: TextStyle(fontSize: 16, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : null)),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, true),
+                                    child: Text(AppLocalizations.of(context)!.yes, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : null)),
+                                  ),
+                                ],
+                              ),
+                            );
+                            
+                            if (confirm == true) {
+                              taskProvider.toggleTaskCompletion(task.id);
+                            }
+                            return;
+                          }
+                        }
+                        taskProvider.toggleTaskCompletion(task.id);
+                      },
                       child: task.isCompleted
                           ? Image.asset(
                               'assets/images/checkbox_checked_floral.png',
@@ -1325,7 +1220,42 @@ class _TaskItem extends StatelessWidget {
                     )
                   : Checkbox(
                       value: task.isCompleted,
-                      onChanged: (_) => taskProvider.toggleTaskCompletion(task.id),
+                      onChanged: (_) async {
+                        final now = DateTime.now();
+                        final today = DateTime(now.year, now.month, now.day);
+                        if (task.date != null) {
+                          final taskDate = DateTime(task.date!.year, task.date!.month, task.date!.day);
+                          final isPast = taskDate.isBefore(today);
+                          
+                          if (isPast && !task.isCompleted) {
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text(AppLocalizations.of(context)!.confirmCompletion),
+                                content: Text(AppLocalizations.of(context)!.confirmCompletionMessage),
+                                actionsAlignment: MainAxisAlignment.spaceBetween,
+                                actionsPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, false),
+                                    child: Text(AppLocalizations.of(context)!.no, style: TextStyle(fontSize: 16, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : null)),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, true),
+                                    child: Text(AppLocalizations.of(context)!.yes, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : null)),
+                                  ),
+                                ],
+                              ),
+                            );
+                            
+                            if (confirm == true) {
+                              taskProvider.toggleTaskCompletion(task.id);
+                            }
+                            return;
+                          }
+                        }
+                        taskProvider.toggleTaskCompletion(task.id);
+                      },
                       shape: const CircleBorder(),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
@@ -1335,18 +1265,22 @@ class _TaskItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      task.title,
-                      style: isProminent 
-                          ? theme.textTheme.titleMedium?.copyWith(
-                              fontSize: 18,
-                              decoration: task.isCompleted ? TextDecoration.lineThrough : null,
-                              color: task.isCompleted ? theme.disabledColor : const Color(0xFF5A463F), // Soft Brown
-                              fontFamily: 'Poppins',
-                            )
-                          : theme.textTheme.bodySmall?.copyWith(
-                              decoration: task.isCompleted ? TextDecoration.lineThrough : null,
-                              color: task.isCompleted ? theme.disabledColor : const Color(0xFF5A463F), // Soft Brown
+                      Text(
+                        task.title,
+                        style: isProminent 
+                            ? theme.textTheme.titleMedium?.copyWith(
+                                fontSize: 18,
+                                decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                                color: task.isCompleted 
+                                    ? theme.disabledColor 
+                                    : (themeProvider.currentTheme == ThemeType.gothicDarkAcademia ? Colors.white : const Color(0xFF5A463F)), // White for Gothic
+                                fontFamily: 'Poppins',
+                              )
+                            : theme.textTheme.bodySmall?.copyWith(
+                                decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                                color: task.isCompleted 
+                                    ? theme.disabledColor 
+                                    : (themeProvider.currentTheme == ThemeType.gothicDarkAcademia ? Colors.white : const Color(0xFF5A463F)), // White for Gothic
                               fontFamily: 'Poppins',
                             ),
                       maxLines: 1,
@@ -1385,13 +1319,13 @@ class _TaskItem extends StatelessWidget {
         Offset.zero & overlay.size,
       ),
       items: [
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'delete',
           child: Row(
             children: [
-              Icon(Icons.delete_outline, color: Colors.red, size: 20),
-              SizedBox(width: 8),
-              Text('Delete', style: TextStyle(color: Colors.red)),
+              const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+              const SizedBox(width: 8),
+              Text(AppLocalizations.of(context)!.delete, style: const TextStyle(color: Colors.red)),
             ],
           ),
         ),
@@ -1415,6 +1349,8 @@ class _OverlayContent extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 750;
     final theme = Theme.of(context);
     final size = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isGothic = themeProvider.currentTheme == ThemeType.gothicDarkAcademia;
 
     return Center(
       child: Material(
@@ -1427,8 +1363,8 @@ class _OverlayContent extends StatelessWidget {
             minHeight: 400, maxHeight: 800
           ),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(32),
+            color: isGothic ? Colors.transparent : theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(isGothic ? 20 : 32),
             boxShadow: [
               BoxShadow(
                 color: theme.shadowColor.withOpacity(0.1),
@@ -1439,7 +1375,7 @@ class _OverlayContent extends StatelessWidget {
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(isGothic ? 20 : 32),
             child: content,
           ),
         ),

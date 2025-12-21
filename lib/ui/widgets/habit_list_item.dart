@@ -80,8 +80,38 @@ class HabitListItem extends StatelessWidget {
                   ),
                 );
               }
-            : () {
-                habitProvider.toggleHabitCompletion(habit.id, date);
+            : () async {
+                final now = DateTime.now();
+                final today = DateTime(now.year, now.month, now.day);
+                final isPast = date.isBefore(today);
+
+                if (isPast && !isCompleted) {
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Confirm Completion'),
+                      content: const Text('Did you really complete this habit in the past?'),
+                      actionsAlignment: MainAxisAlignment.spaceBetween,
+                      actionsPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: Text('No', style: TextStyle(fontSize: 16, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : null)),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          child: Text('Yes', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : null)),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (confirm == true) {
+                    habitProvider.toggleHabitCompletion(habit.id, date);
+                  }
+                } else {
+                  habitProvider.toggleHabitCompletion(habit.id, date);
+                }
               },
         onSecondaryTapUp: (details) async {
           final result = await showMenu(

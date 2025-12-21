@@ -102,11 +102,14 @@ class AppTheme {
   static ThemeData get gothicDarkAcademiaTheme {
     return ThemeData(
       scaffoldBackgroundColor: const Color(0xFF1A1A1A),
-      textTheme: GoogleFonts.ebGaramondTextTheme(ThemeData.dark().textTheme).copyWith(
-        bodyMedium: GoogleFonts.ebGaramond(color: const Color(0xFFF4EDE3)),
+      textTheme: GoogleFonts.ebGaramondTextTheme(ThemeData.dark().textTheme).apply(
+        bodyColor: Colors.white,
+        displayColor: Colors.white,
+      ).copyWith(
+        bodyMedium: GoogleFonts.ebGaramond(color: Colors.white, fontSize: 16),
         titleLarge: GoogleFonts.cinzelDecorative(
-          fontSize: 22,
-          color: const Color(0xFFF4EDE3),
+          fontSize: 24,
+          color: Colors.white,
         ),
       ),
       colorScheme: const ColorScheme.dark(
@@ -149,7 +152,7 @@ class GothicColors {
   static const olive = Color(0xFF6D744C);
   static const burntOrange = Color(0xFFC37328);
   static const antiqueGreen = Color(0xFF848B60);
-  static const text = Color(0xFFF4EDE3);
+  static const text = Colors.white;
   static const metal = Color(0xFFA3A3A3);
 }
 
@@ -157,7 +160,7 @@ class GothicDecorations {
   static BoxDecoration dayCard(Color color) => BoxDecoration(
     color: color.withOpacity(0.92),
     borderRadius: BorderRadius.circular(14),
-    border: Border.all(color: const Color(0xFFA3A3A3), width: 1.3),
+    // border: Border.all(color: const Color(0xFFA3A3A3), width: 1.3), // Removed as per user request
     boxShadow: const [
       BoxShadow(
         color: Colors.black54,
